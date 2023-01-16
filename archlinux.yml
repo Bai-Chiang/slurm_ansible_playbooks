@@ -90,6 +90,22 @@
         - { regexp: '^RUSTFLAGS=', line: 'RUSTFLAGS="-C opt-level=3 -C target-cpu=native"', backrefs: no, insertafter: '^#RUSTFLAGS=' }
         - { regexp: '^MAKEFLAGS=', line: 'MAKEFLAGS="-j$(nproc)"', backrefs: no, insertafter: '^#MAKEFLAGS=' }
 
+    - name: pacman -S firewalld
+      community.general.pacman: name=firewalld state=present
+      become: yes
+
+    - name: systemctl enable --now firewalld.service
+      ansible.builtin.systemd: name=firewalld.service enabled=yes state=started
+      become: yes
+
+    - name: internal interface default to trusted zone
+      ansible.posix.firewalld:
+        zone: trusted
+        interface: enp1s0
+        permanent: yes
+        state: enabled
+      become: yes
+
     - name: Create paru directory
       ansible.builtin.file:
         path: "{{ ansible_user_dir }}/.cache/paru/clone"

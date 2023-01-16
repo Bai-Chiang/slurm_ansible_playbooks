@@ -2,6 +2,13 @@
 - hosts: all
 
   tasks:
+    - name: internal interface default to trusted zone
+      ansible.posix.firewalld:
+        zone: trusted
+        interface: enp1s0
+        permanent: yes
+        state: enabled
+      become: yes
 
     - name: dnf install python3-libsemanage
       ansible.builtin.dnf:
