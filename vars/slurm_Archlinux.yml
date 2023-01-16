@@ -1,7 +1,7 @@
 ---
 munge_key_file: files/slurm/munge.key.example
-slurm_config_file: files/slurm/slurm.conf.archlinux
-slurm_cgroup_config_file: files/slurm/cgroup.conf.archlinux
+slurm_config_file: files/slurm/slurm_Archlinux.conf
+slurm_cgroup_config_file: files/slurm/cgroup_Archlinux.conf
 
 # all nodes and its ip address, appended to /etc/hosts file
 slurm_nodes:

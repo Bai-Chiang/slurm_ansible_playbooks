@@ -93,10 +93,12 @@
     - name: pacman -S firewalld
       community.general.pacman: name=firewalld state=present
       become: yes
+      when: ansible_facts['os_family'] == "Archlinux"
 
     - name: systemctl enable --now firewalld.service
       ansible.builtin.systemd: name=firewalld.service enabled=yes state=started
       become: yes
+      when: ansible_facts['os_family'] == "Archlinux"
 
     - name: internal interface default to trusted zone
       ansible.posix.firewalld:
@@ -105,6 +107,7 @@
         permanent: yes
         state: enabled
       become: yes
+      when: ansible_facts['os_family'] == "Archlinux"
 
     - name: Create paru directory
       ansible.builtin.file:

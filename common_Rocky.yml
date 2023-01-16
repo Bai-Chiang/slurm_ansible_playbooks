@@ -9,6 +9,7 @@
         permanent: yes
         state: enabled
       become: yes
+      when: ansible_facts['os_family'] == "RedHat"
 
     - name: dnf install python3-libsemanage
       ansible.builtin.dnf:

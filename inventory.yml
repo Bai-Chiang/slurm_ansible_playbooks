@@ -4,6 +4,7 @@ all:
 
     nas:
       hosts:
+        192.168.122.10:
         192.168.122.20:
     
     slurm:
@@ -14,12 +15,15 @@ all:
 
             slurm_controller_primary:
               hosts:
+                192.168.122.10:
                 192.168.122.20:
             slurm_controller_backup:
               hosts:
 
         slurm_cpu_nodes:
           hosts:
+            192.168.122.11:
+            192.168.122.12:
             192.168.122.21:
             192.168.122.22:
 

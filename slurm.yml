@@ -1,17 +1,41 @@
 ---
 - hosts: slurm
 
-  vars_files:
-    - vars/slurm.yml
+  #vars_files:
+  #  - vars/slurm.yml
   
-  roles:
-    - slurm
-
   tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: vars/slurm_{{ ansible_facts['distribution'] }}.yml
+
+    - name: Include role
+      include_role:
+        name: slurm
+
     - name: copy test scripts
       ansible.builtin.copy:
         src: test_scripts/
         dest: "{{ ansible_user_dir }}"
         mode: '0644'
       when: "'slurm_controller_primary' in group_names"
+
+    - name: pacman -S podman fuse-overlayfs slirp4netns toolbox
+      community.general.pacman:
+        name:
+          - podman
+          - fuse-overlayfs
+          - slirp4netns
+        state: present
+      become: yes
+      when: ansible_facts['os_family'] == "Archlinux"
+
+    - name: dnf install podman toolbox
+      ansible.builtin.dnf:
+        name:
+          - podman
+          - toolbox
+        state: present
+      become: yes
+      when: ansible_facts['os_family'] == "RedHat"
 

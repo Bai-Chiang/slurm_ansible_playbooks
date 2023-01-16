@@ -1,9 +1,15 @@
 ---
 - hosts: nas:slurm
 
-  vars_files:
-    - vars/nfs.yml
+  #vars_files:
+  #  - vars/nfs.yml
 
-  roles:
-    - role: nfs
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: vars/nfs_{{ ansible_facts['distribution'] }}.yml
+
+    - name: Include role
+      include_role:
+        name: nfs
 
