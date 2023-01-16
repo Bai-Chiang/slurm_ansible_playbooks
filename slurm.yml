@@ -1,0 +1,17 @@
+---
+- hosts: slurm
+
+  vars_files:
+    - vars/slurm.yml
+  
+  roles:
+    - slurm
+
+  tasks:
+    - name: copy test scripts
+      ansible.builtin.copy:
+        src: test_scripts/
+        dest: "{{ ansible_user_dir }}"
+        mode: '0644'
+      when: "'slurm_controller_primary' in group_names"
+

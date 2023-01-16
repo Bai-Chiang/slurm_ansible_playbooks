@@ -1,0 +1,26 @@
+---
+- name: pacman -S slurm-llnl numactl
+  community.general.pacman:
+    name:
+      - slurm-llnl
+      - numactl
+    state: present
+  become: yes
+  when: ansible_facts['os_family'] == "Archlinux"
+
+- name: Enable EPEL repo
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  become: yes
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: dnf install slurm
+  ansible.builtin.dnf:
+    name:
+      - slurm
+      - slurm-slurmctld
+      - slurm-slurmd
+    state: present
+  become: yes
+  when: ansible_facts['os_family'] == "RedHat"

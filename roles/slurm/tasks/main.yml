@@ -1,0 +1,11 @@
+---
+- block:
+  - import_tasks: install_slurm.yml
+  - import_tasks: slurm_setup.yml
+
+  - include_tasks: slurm_users.yml
+    loop: "{{ slurm_users }}"
+    loop_control:
+      loop_var: slurm_user
+
+  when: "'slurm' in group_names"

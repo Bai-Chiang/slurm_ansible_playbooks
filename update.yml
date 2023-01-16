@@ -1,0 +1,24 @@
+---
+- hosts: all
+
+  tasks:
+    - name: pacman -Syu
+      community.general.pacman:
+        update_cache: yes
+        upgrade: yes
+      become: yes
+      when: ansible_facts['os_family'] == "Archlinux"
+
+    - name: apt update && apt dist-upgrade
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+      become: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: dnf update
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+      become: yes
+      when: ansible_facts['os_family'] == "RedHat"

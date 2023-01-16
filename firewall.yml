@@ -1,0 +1,54 @@
+---
+- hosts: all
+
+  tasks:
+
+    - name: internal interface default to trusted zone
+      ansible.posix.firewalld:
+        zone: trusted
+        interface: enp1s0
+        permanent: yes
+        state: enabled
+      become: yes
+
+    #- name: firewall rule for NFS server if it's also a controll node
+    #  ansible.posix.firewalld:
+    #    rich_rule: rule family=ipv4 source address="192.168.122.0/24" service name="nfs" accept
+    #    permanent: yes
+    #    immediate: yes
+    #    state: enabled
+    #  become: yes
+    #  when: "'slurm_control_nodes' in group_names"
+
+    #- name: add firewalld service file slurmctld.xml
+    #  ansible.builtin.copy:
+    #    content: |
+    #      <?xml version="1.0" encoding="utf-8"?>
+    #      <service>
+    #        <short>Slurmctld</short>
+    #        <description>Slurm controller</description>
+    #        <port protocol="tcp" port="6817"/>
+    #      </service>
+    #    dest: /etc/firewalld/services/slurmctld.xml
+    #    owner: root
+    #    group: root
+    #    mode: '0644'
+    #  become: yes
+    #  register: slurmctld_firewalld_file
+    #  when: "'slurm_control_nodes' in group_names"
+
+    #- name: Reload firewalld when slurmctld.xml changed
+    #  ansible.builtin.command: firewall-cmd --reload
+    #  become: yes
+    #  when:
+    #    - "'slurm_control_nodes' in group_names"
+    #    - slurmctld_firewalld_file.changed
+
+    #- name: firewall rule for slurm controll nodes
+    #  ansible.posix.firewalld:
+    #    rich_rule: rule family=ipv4 source address="192.168.122.0/24" service name="slurmctld" accept
+    #    permanent: yes
+    #    immediate: yes
+    #    state: enabled
+    #  become: yes
+    #  when: "'slurm_control_nodes' in group_names"

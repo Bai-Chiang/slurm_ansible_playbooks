@@ -1,0 +1,10 @@
+---
+- import_tasks: install_nfs.yml
+
+- include_tasks: nfs_server.yml
+  when: "'nas' in group_names"
+
+- include_tasks: nfs_client.yml
+  when:
+    - "'nas' not in group_names"
+    - "'slurm' in group_names"

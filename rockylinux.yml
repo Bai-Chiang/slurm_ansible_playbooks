@@ -1,0 +1,14 @@
+---
+- hosts: all
+
+  tasks:
+
+    - name: dnf install python3-libsemanage
+      ansible.builtin.dnf:
+        name: python3-libsemanage
+        state: present
+      become: yes
+      when:
+        - ansible_facts['os_family'] == "RedHat"
+        - ansible_selinux.status == "enabled"
+

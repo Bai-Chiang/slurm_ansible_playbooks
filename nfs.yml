@@ -1,0 +1,9 @@
+---
+- hosts: nas:slurm
+
+  vars_files:
+    - vars/nfs.yml
+
+  roles:
+    - role: nfs
+

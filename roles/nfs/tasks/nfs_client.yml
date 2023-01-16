@@ -1,0 +1,26 @@
+---
+- block:
+  - name: setsebool -P use_nfs_home_dirs=true
+    ansible.posix.seboolean:
+      name: use_nfs_home_dirs
+      state: yes
+      persistent: yes
+    when: ansible_selinux.status == "enabled"
+    become: yes
+
+  - name: Add nfs entries to /etc/fstab
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      regexp: "^{{ item.file_system }}\\s+{{ item.dir }}"
+      line: "{{ item.file_system }}    {{ item.dir }}    {{ item.type }}    {{ item.options }}    {{ item.dump }} {{ item.pass }}"
+      state: present
+    loop: "{{ nfs_fstab_entries }}"
+
+  - name: Remove old /home entry in /etc/fstab
+    ansible.builtin.lineinfile:
+      path: /etc/fstab
+      regexp: '^((UUID|/dev).*/home.*)'
+      line: '# \1'
+      backrefs: yes
+      state: present
+  become: yes
