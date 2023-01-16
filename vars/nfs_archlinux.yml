@@ -1,0 +1,30 @@
+---
+# server variables
+
+# NFS root directory
+nfs_root: /srv/nfs
+
+# NFS root ip and opt in /etc/exports
+nfs_root_opt: '192.168.122.0/24(ro,sync,nocrossmnt,fsid=0)'
+
+# Create bind mounts
+# target: the directory to be shared
+# bind: the bind mount directory
+# opt:  NFS option in /etc/exports
+nfs_mount_point:
+  - { target: /home, bind: /srv/nfs/home, opt: '192.168.122.0/24(rw,sync)' }
+
+
+
+# client variables
+
+# /etc/fstab entries for NFS mount
+# <file system> <dir> <type> <options> <dump> <pass>
+nfs_fstab_entries:
+  - file_system: 192.168.122.10:/home
+    dir: /home
+    type: nfs
+    options: defaults,_netdev
+    dump: 0
+    pass: 0
+
