@@ -1,0 +1,44 @@
+---
+- name: Enable EPEL repo
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Rocky"
+  register: epel_repo
+
+- name: Check crb repo enabled or not
+  ansible.builtin.shell: grep -A 8 '\[crb\]' /etc/yum.repos.d/rocky.repo | grep enabled=1 | wc -l
+  become: true
+  changed_when: false
+  when:
+    - ansible_distribution == "Rocky"
+  register: crb_repo_stat
+
+- name: enable crb repo
+  ansible.builtin.command: dnf config-manager --set-enabled crb
+  become: true
+  when:
+    - crb_repo_stat.stdout == "0"
+    - ansible_distribution == "Rocky"
+
+- name: dnf install python3-libsemanage
+  ansible.builtin.dnf:
+    name: python3-libsemanage
+    state: present
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_selinux.status == "enabled"
+
+#- name: internal interface default to trusted zone
+#  ansible.posix.firewalld:
+#    zone: trusted
+#    interface: "{{ trusted_interface }}"
+#    permanent: true
+#    state: enabled
+#  become: true
+#  when:
+#    - ansible_os_family == "RedHat"
+#    - trusted_interface is defined

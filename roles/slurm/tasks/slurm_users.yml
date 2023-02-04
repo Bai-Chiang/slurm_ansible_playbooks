@@ -1,5 +1,5 @@
 ---
-- name: users (except primary controller)
+- name: create user without home directory (non-control nodes)
   ansible.builtin.user:
     name: "{{ slurm_user.name }}"
     uid: "{{ slurm_user.uid }}"
@@ -9,10 +9,10 @@
     create_home: false
     state: "{{ slurm_user.state }}"
     remove: true
-  become: yes
-  when: "'slurm_controller_primary' not in group_names"
+  become: true
+  when: "'slurm_control_node' not in group_names"
 
-- name: users (primary controller)
+- name: create user with home directory (control node)
   ansible.builtin.user:
     name: "{{ slurm_user.name }}"
     uid: "{{ slurm_user.uid }}"
@@ -22,16 +22,16 @@
     create_home: true
     state: "{{ slurm_user.state }}"
     remove: true
-  become: yes
-  when: "'slurm_controller_primary' in group_names"
+  become: true
+  when: "'slurm_control_node' in group_names"
 
 - name: Create .ssh directory if it does not exist
   ansible.builtin.file:
     path: "/home/{{ slurm_user.name }}/.ssh"
     state: directory
     mode: '0700'
-  become: yes
-  when: "'slurm_controller_primary' in group_names"
+  become: true
+  when: "'slurm_control_node' in group_names"
 
 - name: Copy ssk key
   ansible.builtin.copy:
@@ -42,5 +42,5 @@
     owner: "{{ slurm_user.name }}"
     group: "{{ slurm_user.name }}"
     mode: '0600'
-  become: yes
-  when: "'slurm_controller_primary' in group_names"
+  become: true
+  when: "'slurm_control_node' in group_names"

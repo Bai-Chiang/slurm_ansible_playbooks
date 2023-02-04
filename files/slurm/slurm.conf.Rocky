@@ -3,7 +3,7 @@
 # See the slurm.conf man page for more information.
 #
 ClusterName=rockylinux_testing
-SlurmctldHost=rocky0(192.168.122.20)
+SlurmctldHost=rocky10(192.168.124.10)
 #SlurmctldHost=
 #
 #DisableRootJobs=NO
@@ -142,6 +142,11 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #SuspendTime=
 #
 #
+GresTypes=gpu
+#
+#
 # COMPUTE NODES
-NodeName=rocky[1-2] NodeAddr=192.168.122.2[1-2] CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
-PartitionName=debug Nodes=ALL Default=YES MaxTime=INFINITE State=UP
+NodeName=rocky1 NodeAddr=192.168.124.1 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=rocky11 NodeAddr=192.168.124.11 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=rocky12 NodeAddr=192.168.124.12 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 Gres=gpu:1 State=UNKNOWN
+PartitionName=debug Nodes=rocky[11-12] Default=YES MaxTime=INFINITE State=UP

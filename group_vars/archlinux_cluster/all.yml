@@ -1,13 +1,21 @@
 ---
 munge_key_file: files/slurm/munge.key.example
-slurm_config_file: files/slurm/slurm_Rocky.conf
-slurm_cgroup_config_file: files/slurm/cgroup_Rocky.conf
+slurm_config_file: files/slurm/slurm.conf.Archlinux
+slurm_cgroup_config_file: files/slurm/cgroup.conf.Archlinux
+slurm_gres_config_file: files/slurm/gres.conf.Archlinux
+
+# The ip/mask of the cluster
+slurm_cluster_ip: 192.168.123.0/24
+
+# The control node ip
+slurm_control_node_ip: 192.168.123.10
 
 # all nodes and its ip address, appended to /etc/hosts file
-slurm_nodes:
-  - { hostname: rocky0, ip: 192.168.122.20 }
-  - { hostname: rocky1, ip: 192.168.122.21 }
-  - { hostname: rocky2, ip: 192.168.122.22 }
+slurm_nodes_hosts:
+  - { hostname: arch1, ip: 192.168.123.1 }
+  - { hostname: arch10, ip: 192.168.123.10 }
+  - { hostname: arch11, ip: 192.168.123.11 }
+  - { hostname: arch12, ip: 192.168.123.12 }
 
 # Encrypt this file using for example ansible vault to prevent leak user info.
 slurm_users:

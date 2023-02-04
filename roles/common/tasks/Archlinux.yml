@@ -1,0 +1,129 @@
+---
+#- name: pacman -S firewalld
+#  community.general.pacman: name=firewalld state=present
+#  become: true
+#  when: ansible_distribution == "Archlinux"
+#
+#- name: systemctl enable --now firewalld.service
+#  ansible.builtin.systemd: name=firewalld.service enabled=true state=started
+#  become: true
+#  when: ansible_distribution == "Archlinux"
+#
+#- name: external interface default to external zone
+#  ansible.posix.firewalld:
+#    zone: external
+#    interface: "{{ external_interface }}"
+#    permanent: true
+#    state: enabled
+#  become: true
+#  when:
+#    - external_interface is defined
+#    - ansible_distribution == "Archlinux"
+#
+#- name: internal interface default to trusted zone
+#  ansible.posix.firewalld:
+#    zone: trusted
+#    interface: "{{ trusted_interface }}"
+#    permanent: true
+#    state: enabled
+#  become: true
+#  when:
+#    - trusted_interface is defined
+#    - ansible_distribution == "Archlinux"
+
+- name: Add time servers
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/timesyncd.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    insertafter: "{{ item.insertafter }}"
+  become: true
+  when: ansible_distribution == "Archlinux"
+  loop:
+    - { regexp: '^NTP=', insertafter: '^#\s*NTP=', line: NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org }
+    - { regexp: '^FallbackNTP=', insertafter: '^#\s*FallbackNTP=', line: FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 0.fr.pool.ntp.org }
+
+- name: systemctl enable --now systemd-timesyncd.service
+  ansible.builtin.systemd: name=systemd-timesyncd state=started enabled=true
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: Enable pacman parallel downloads
+  ansible.builtin.lineinfile:
+    path: /etc/pacman.conf
+    regexp: '^ParallelDownloads ='
+    line: ParallelDownloads = 5
+    insertafter: '^#\s*ParallelDownloads = 5'
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: pacman -S reflector
+  community.general.pacman: name=reflector state=present
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - ansible_architecture == 'x86_64'
+
+- name: Configure reflector
+  ansible.builtin.lineinfile:
+    path: /etc/xdg/reflector/reflector.conf
+    regexp: '^--country'
+    line: "--country us"
+    insertafter: '^#\s*--country'
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - ansible_architecture == 'x86_64'
+
+- name: systemctl enable reflector.service
+  ansible.builtin.systemd: name=reflector enabled=true
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - ansible_architecture == 'x86_64'
+
+- name: systemctl enable --now reflector.timer
+  ansible.builtin.systemd: name=reflector.timer enabled=true state=started
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - ansible_architecture == 'x86_64'
+
+- name: pacman -S pacman-contrib for paccache
+  community.general.pacman: name=pacman-contrib state=present
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: systemctl enable --now paccache.timer
+  ansible.builtin.systemd: name=paccache.timer enabled=true state=started
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: systemctl enable --now fstrim.timer
+  ansible.builtin.systemd: name=fstrim.timer enabled=true state=started
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: Optimize AUR building CFLAGS
+  ansible.builtin.lineinfile:
+    path: /etc/makepkg.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backrefs: "{{ item.backrefs }}"
+    insertafter: "{{ item.insertafter }}"
+  become: true
+  when: ansible_distribution == "Archlinux"
+  loop:
+    - { regexp: '^(CFLAGS=.*-march=).*( -pipe.*)', line: '\1native -O3\2', backrefs: true, insertafter: '' }
+    - { regexp: '^RUSTFLAGS=', line: 'RUSTFLAGS="-C opt-level=3 -C target-cpu=native"', backrefs: false, insertafter: '^#RUSTFLAGS=' }
+    - { regexp: '^MAKEFLAGS=', line: 'MAKEFLAGS="-j$(nproc)"', backrefs: false, insertafter: '^#MAKEFLAGS=' }
+
+- name: Create paru directory
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/.cache/paru/clone"
+    state: directory
+    mode: '0755'
+  when:
+    - ansible_distribution == "Archlinux"
+    - "'slurm_control_node' in group_names"
+

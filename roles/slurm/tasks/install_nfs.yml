@@ -3,12 +3,12 @@
   community.general.pacman:
     name: nfs-utils
     state: present
-  become: yes
-  when: ansible_facts['os_family'] == "Archlinux"
+  become: true
+  when: ansible_distribution == "Archlinux"
 
 - name: dnf install nfs-utils
   ansible.builtin.dnf:
     name: nfs-utils
     state: present
-  become: yes
-  when: ansible_facts['os_family'] == "RedHat"
+  become: true
+  when: ansible_os_family == "RedHat"

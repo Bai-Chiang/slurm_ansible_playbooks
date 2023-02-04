@@ -12,49 +12,57 @@
     owner: root
     group: root
     mode: '0644'
+  become: true
   register: slurmctld_firewalld_file
   when: "'slurm_control_nodes' in group_names"
 
 - name: Reload firewalld when slurmctld.xml changed
   ansible.builtin.command: firewall-cmd --reload
+  become: true
   when:
     - "'slurm_control_nodes' in group_names"
     - slurmctld_firewalld_file.changed
 
 - name: firewall rule for slurm controll nodes
   ansible.posix.firewalld:
-    rich_rule: rule family=ipv4 source address="{{ slurm_accept_ipv4 }}" service name="slurmctld" accept
-    permanent: yes
-    immediate: yes
+    rich_rule: rule family=ipv4 source address="{{ item }}" service name="slurmctld" accept
+    permanent: true
+    immediate: true
     state: enabled
+  loop: "{{ cluster_ip }}"
+  become: true
   when: "'slurm_control_nodes' in group_names"
 
-#- name: add firewalld service file slurmd.xml
-#  ansible.builtin.copy:
-#    content: |
-#      <?xml version="1.0" encoding="utf-8"?>
-#      <service>
-#        <short>Slurmd</short>
-#        <description>Slurm compute node daemons.</description>
-#        <port protocol="tcp" port="6818"/>
-#      </service>
-#    dest: /etc/firewalld/services/slurmd.xml
-#    owner: root
-#    group: root
-#    mode: '0644'
-#  register: slurmd_firewalld_file
-#  #when: "'cpu_nodes' in group_names"
-#
-#- name: Reload firewalld when slurmd.xml changed
-#  ansible.builtin.command: firewall-cmd --reload
-#  #when:
-#  #  #- "'cpu_nodes' in group_names"
-#  #  - slurmd_firewalld_file.changed
-#
-#- name: firewall rule for slurm compute nodes
-#  ansible.posix.firewalld:
-#    rich_rule: rule family=ipv4 source address="{{ slurm_accept_ipv4 }}" service name="slurmd" accept
-#    permanent: yes
-#    immediate: yes
-#    state: enabled
-#  #when: "'cpu_nodes' in group_names"
+- name: add firewalld service file slurmd.xml
+  ansible.builtin.copy:
+    content: |
+      <?xml version="1.0" encoding="utf-8"?>
+      <service>
+        <short>Slurmd</short>
+        <description>Slurm compute node daemons.</description>
+        <port protocol="tcp" port="6818"/>
+      </service>
+    dest: /etc/firewalld/services/slurmd.xml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  register: slurmd_firewalld_file
+  when: "'slurm_compute_nodes' in group_names"
+
+- name: Reload firewalld when slurmd.xml changed
+  ansible.builtin.command: firewall-cmd --reload
+  become: true
+  when:
+    - "'slurm_compute_nodes' in group_names"
+    - slurmd_firewalld_file.changed
+
+- name: firewall rule for slurm compute nodes
+  ansible.posix.firewalld:
+    rich_rule: rule family=ipv4 source address="{{ item }}" service name="slurmd" accept
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ cluster_ip }}"
+  become: true
+  when: "'slurm_compute_nodes' in group_names"

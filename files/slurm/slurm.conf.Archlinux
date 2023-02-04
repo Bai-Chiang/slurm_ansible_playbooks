@@ -3,7 +3,7 @@
 # See the slurm.conf man page for more information.
 #
 ClusterName=archlinux_testing
-SlurmctldHost=arch0(192.168.122.10)
+SlurmctldHost=arch10(192.168.123.10)
 #
 #MailProg=/bin/mail
 MpiDefault=none
@@ -44,6 +44,13 @@ SlurmctldLogFile=/var/log/slurmctld.log
 SlurmdLogFile=/var/log/slurmd.log
 #
 #
+#
+#
+GresTypes=gpu
+#
+#
 # COMPUTE NODES
-NodeName=arch[1-2] NodeAddr=192.168.122.1[1-2] CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
-PartitionName=debug Nodes=ALL Default=YES MaxTime=INFINITE State=UP
+NodeName=arch1 NodeAddr=192.168.123.1 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=arch11 NodeAddr=192.168.123.11 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=arch12 NodeAddr=192.168.123.12 CPUs=2 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 Gres=gpu:1 State=UNKNOWN
+PartitionName=debug Nodes=arch[11-12] Default=YES MaxTime=INFINITE State=UP

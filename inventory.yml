@@ -2,30 +2,43 @@
 all:
   children:
 
-    nas:
+    slurm_login_node:
       hosts:
-        192.168.122.10:
-        192.168.122.20:
-    
-    slurm:
-      children:
+        192.168.123.1:
+        192.168.124.1:
 
-        slurm_control_nodes:
-          children:
+    # The only control node in the cluster
+    # It act as NFS server share the /home directory
+    slurm_control_node:
+        hosts:
+          192.168.123.10:
+          192.168.124.10:
 
-            slurm_controller_primary:
-              hosts:
-                192.168.122.10:
-                192.168.122.20:
-            slurm_controller_backup:
-              hosts:
+    slurm_compute_nodes:
+      hosts:
+        192.168.123.11:
+        192.168.123.12:
+        192.168.124.11:
+        192.168.124.12:
 
-        slurm_cpu_nodes:
-          hosts:
-            192.168.122.11:
-            192.168.122.12:
-            192.168.122.21:
-            192.168.122.22:
+    nvidia_gpu_nodes:
+      hosts:
+        192.168.123.12:
+        192.168.124.12:
+
+    archlinux_cluster:
+      hosts:
+        192.168.123.1:
+        192.168.123.10:
+        192.168.123.11:
+        192.168.123.12:
+
+    rockylinux_cluster:
+      hosts:
+        192.168.124.1:
+        192.168.124.10:
+        192.168.124.11:
+        192.168.124.12:
 
   vars:
     ansible_user: tux

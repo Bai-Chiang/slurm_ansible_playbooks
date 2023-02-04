@@ -1,0 +1,25 @@
+---
+- name: setsebool -P use_nfs_home_dirs=true
+  ansible.posix.seboolean:
+    name: use_nfs_home_dirs
+    state: true
+    persistent: true
+  when: ansible_selinux.status == "enabled"
+  become: true
+
+- name: Add nfs /home entries to /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: "^{{ slurm_control_node_ip }}:/home\\s+/home"
+    line: "{{ slurm_control_node_ip }}:/home    /home    nfs    defaults,_netdev    0 0"
+    state: present
+  become: true
+
+- name: Remove old /home entry in /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '^((UUID|/dev).*/home.*)'
+    line: '# \1'
+    backrefs: true
+    state: present
+  become: true

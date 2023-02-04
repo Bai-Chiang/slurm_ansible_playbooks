@@ -6,60 +6,43 @@
     owner: munge
     group: munge
     mode: '0600'
-  become: yes
+  become: true
   register: munge_key_file
 
 - name: systemctl enable --now munge.service
-  ansible.builtin.systemd:
-    name: munge.service
-    enabled: yes
-    state: started
-  become: yes
+  ansible.builtin.systemd: name=munge.service enabled=true state=started
+  become: true
 
-- name: copy slurm.conf to all nodes (Arch Linux)
+- name: set slurm_conf_dir (Archlinux)
+  set_fact:
+    slurm_conf_dir: /etc/slurm-llnl
+  when: ansible_distribution == "Archlinux"
+
+- name: set slurm_conf_dir (Rocky)
+  set_fact:
+    slurm_conf_dir: /etc/slurm
+  when: ansible_os_family == "RedHat"
+
+- name: copy slurm.conf to all nodes
   ansible.builtin.copy:
     src: "{{ slurm_config_file }}"
-    dest: /etc/slurm-llnl/slurm.conf
+    dest: "{{ slurm_conf_dir }}/slurm.conf"
     owner: root
     group: root
     mode: '0644'
-  become: yes
-  when: ansible_facts['os_family'] == "Archlinux"
-
-- name: copy slurm.conf to all nodes (Rocky Linux)
-  ansible.builtin.copy:
-    src: "{{ slurm_config_file }}"
-    dest: /etc/slurm/slurm.conf
-    owner: root
-    group: root
-    mode: '0644'
-  become: yes
-  when: ansible_facts['os_family'] == "RedHat"
+  become: true
   register: slurm_conf
 
-- name: copy cgroup.conf to all compute nodes (Arch Linux)
+- name: copy cgroup.conf to all compute nodes
   ansible.builtin.copy:
     src: "{{ slurm_cgroup_config_file }}"
-    dest: /etc/slurm-llnl/cgroup.conf
+    dest: "{{ slurm_conf_dir }}/cgroup.conf"
     owner: root
     group: root
     mode: '0644'
-  become: yes
+  become: true
   when:
-    - "'slurm_cpu_nodes' in group_names"
-    - ansible_facts['os_family'] == "Archlinux"
-
-- name: copy cgroup.conf to all compute nodes (Rocky Linux)
-  ansible.builtin.copy:
-    src: "{{ slurm_cgroup_config_file }}"
-    dest: /etc/slurm/cgroup.conf
-    owner: root
-    group: root
-    mode: '0644'
-  become: yes
-  when:
-    - "'slurm_cpu_nodes' in group_names"
-    - ansible_facts['os_family'] == "RedHat"
+    - "'slurm_compute_nodes' in group_names"
 
 - name: Create user slurm
   ansible.builtin.user:
@@ -70,50 +53,44 @@
     shell: "/usr/bin/nologin"
     create_home: false
     state: present
-  become: yes
+  become: true
 
 - name: Slurm run as user slurm (not root)
   ansible.builtin.shell: |
     systemctl stop slurmd.service
     systemctl stop slurmctld.service
     slurm-setuser -u slurm -g slurm -y
-  become: yes
+  become: true
   when:
-    - ansible_facts['os_family'] == "RedHat"
+    - ansible_os_family == "RedHat"
     - slurm_conf.changed
 
 - name: start and enable slurmd.service on all compute nodes
-  ansible.builtin.systemd:
-    name: slurmd.service
-    enabled: yes
-    state: started
-  become: yes
-  when: "'slurm_cpu_nodes' in group_names"
+  ansible.builtin.systemd: name=slurmd.service enabled=true state=started
+  become: true
+  when: "'slurm_compute_nodes' in group_names or 'slurm_login_node' in group_names"
 
 - name: start and enable slurmctld.service on all control nodes
-  ansible.builtin.systemd:
-    name: slurmctld.service
-    enabled: yes
-    state: started
-  become: yes
-  when: "'slurm_control_nodes' in group_names"
+  ansible.builtin.systemd: name=slurmctld.service enabled=true state=started
+  become: true
+  when: "'slurm_control_node' in group_names"
 
 - name: Create groups if not exists
   ansible.builtin.group:
     name: "{{ item.name }}"
     gid: "{{ item.gid }}"
     state: present
-  become: yes
+  become: true
   loop: "{{ slurm_groups }}"
 
 - name: Add all cluster nodes to /etc/hosts
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    search_string: "{{ item.hostname }}"
+    regexp: "^{{ item.ip }}\\s+{{ item.hostname }}"
     line: "{{ item.ip }}    {{ item.hostname }}"
     owner: root
     group: root
     mode: '0644'
-  become: yes
-  loop: "{{ slurm_nodes }}"
+  become: true
+  loop: "{{ slurm_nodes_hosts }}"
 

@@ -1,0 +1,28 @@
+---
+- hosts: all
+
+  #roles:
+  #  - common
+  #  - nfs
+  #  - slurm
+
+
+  tasks:
+
+    - name: Include roles/common
+      include_role: name=common
+
+    - import_tasks: tasks/openssh.yml
+
+    - name: Include roles/slurm
+      include_role: name=slurm
+
+    - name: copy test scripts
+      ansible.builtin.copy:
+        src: test_scripts/
+        dest: "{{ ansible_user_dir }}"
+        mode: '0644'
+      when: "'slurm_control_node' in group_names"
+
+    - import_tasks: tasks/packages.yml
+

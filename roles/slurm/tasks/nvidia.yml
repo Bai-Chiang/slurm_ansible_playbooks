@@ -1,0 +1,38 @@
+---
+- name: pacman -S nvidia cuda
+  community.general.pacman:
+    name:
+      - nvidia
+      - cuda
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+
+- name: Enable rpmfusion-nonfree (for nvidia driver and cuda)
+  ansible.builtin.dnf:
+    name: https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+    disable_gpg_check: true
+    state: present
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+
+- name: dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
+  ansible.builtin.dnf:
+    name:
+      - akmod-nvidia
+      - xorg-x11-drv-nvidia-cuda
+    state: present
+  become: true
+  when:
+    - ansible_os_family == "RedHat"
+
+- name: copy gres.conf
+  ansible.builtin.copy:
+    src: "{{ slurm_gres_config_file }}"
+    dest: "{{ slurm_conf_dir }}/gres.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true

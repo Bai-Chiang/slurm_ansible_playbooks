@@ -1,0 +1,13 @@
+---
+- name: Force ssh public key authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    insertafter: "{{ item.insertafter }}"
+    validate: /usr/sbin/sshd -T -f %s
+  become: true
+  loop:
+    - { regexp: '^PasswordAuthentication', line: PasswordAuthentication no, insertafter: '#\s*PasswordAuthentication' }
+    - { regexp: '^KbdInteractiveAuthentication', line: KbdInteractiveAuthentication no, insertafter: '^KbdInteractiveAuthentication' }
+    - { regexp: '^AuthenticationMethods', line: AuthenticationMethods publickey, insertafter: '^PasswordAuthentication' }
