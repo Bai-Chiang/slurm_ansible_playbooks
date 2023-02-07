@@ -26,24 +26,24 @@
     - "'slurm_login_node' in group_names"
 
 
-- name: pacman -S podman fuse-overlayfs toolbox
-  community.general.pacman:
-    name:
-      - podman
-      - fuse-overlayfs
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Archlinux"
-    - "'slurm_login_node' in group_names"
-
-- name: dnf install podman toolbox
-  ansible.builtin.dnf:
-    name:
-      - podman
-      - toolbox
-    state: present
-  become: true
-  when:
-    - ansible_os_family == "RedHat"
-    - "'slurm_login_node' in group_names"
+#- name: pacman -S podman fuse-overlayfs toolbox
+#  community.general.pacman:
+#    name:
+#      - podman
+#      - fuse-overlayfs
+#    state: present
+#  become: true
+#  when:
+#    - ansible_distribution == "Archlinux"
+#    - "'slurm_login_node' in group_names"
+#
+#- name: dnf install podman toolbox
+#  ansible.builtin.dnf:
+#    name:
+#      - podman
+#      - toolbox
+#    state: present
+#  become: true
+#  when:
+#    - ansible_os_family == "RedHat"
+#    - "'slurm_login_node' in group_names"
