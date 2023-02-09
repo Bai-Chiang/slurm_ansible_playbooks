@@ -118,12 +118,5 @@
     - { regexp: '^RUSTFLAGS=', line: 'RUSTFLAGS="-C opt-level=3 -C target-cpu=native"', backrefs: false, insertafter: '^#RUSTFLAGS=' }
     - { regexp: '^MAKEFLAGS=', line: 'MAKEFLAGS="-j$(nproc)"', backrefs: false, insertafter: '^#MAKEFLAGS=' }
 
-- name: Create paru directory
-  ansible.builtin.file:
-    path: "{{ ansible_user_dir }}/.cache/paru/clone"
-    state: directory
-    mode: '0755'
-  when:
-    - ansible_distribution == "Archlinux"
-    - "'slurm_control_node' in group_names"
+- include_tasks: AUR.yml
 

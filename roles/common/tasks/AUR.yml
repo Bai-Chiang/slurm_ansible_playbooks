@@ -1,0 +1,20 @@
+---
+- name: Create paru cache directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+  become: true
+  loop:
+    - "/paru"
+    - "/paru/clone"
+  
+- name: Set paru clone directory
+  ansible.builtin.lineinfile:
+    path: /etc/paru.conf
+    regexp: '^CloneDir ='
+    line: CloneDir = /paru/clone
+    insertafter: '^\[options\]'
+  become: true
