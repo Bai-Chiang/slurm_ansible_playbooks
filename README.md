@@ -4,7 +4,8 @@
 The playbooks are tested with following distributions:
 
 - Rocky Linux 9
-- Arch Linux (because I can)
+- Debian 12 (WIP)
+- Arch Linux (why not)
 
 
 These playbooks does not handle networking and firewall.
@@ -23,6 +24,7 @@ The internal nodes can only access internet through the login node, and are not 
 There is only one slurm control node (no backup control nodes), and it is also act as a NFS server that share the `/home` directory over the internal network.
 
 Users can only ssh into the login node.
+
 
 This playbook does not set up MPI or environment mode.
 User should install their own packages (like gcc, mpich, etc) with specified version through [conda](https://docs.conda.io/en/latest/) package manager.
