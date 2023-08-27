@@ -1,36 +1,4 @@
 ---
-#- name: pacman -S firewalld
-#  community.general.pacman: name=firewalld state=present
-#  become: true
-#  when: ansible_distribution == "Archlinux"
-#
-#- name: systemctl enable --now firewalld.service
-#  ansible.builtin.systemd: name=firewalld.service enabled=true state=started
-#  become: true
-#  when: ansible_distribution == "Archlinux"
-#
-#- name: external interface default to external zone
-#  ansible.posix.firewalld:
-#    zone: external
-#    interface: "{{ external_interface }}"
-#    permanent: true
-#    state: enabled
-#  become: true
-#  when:
-#    - external_interface is defined
-#    - ansible_distribution == "Archlinux"
-#
-#- name: internal interface default to trusted zone
-#  ansible.posix.firewalld:
-#    zone: trusted
-#    interface: "{{ trusted_interface }}"
-#    permanent: true
-#    state: enabled
-#  become: true
-#  when:
-#    - trusted_interface is defined
-#    - ansible_distribution == "Archlinux"
-
 - name: Add time servers
   ansible.builtin.lineinfile:
     path: /etc/systemd/timesyncd.conf
@@ -118,5 +86,5 @@
     - { regexp: '^RUSTFLAGS=', line: 'RUSTFLAGS="-C opt-level=3 -C target-cpu=native"', backrefs: false, insertafter: '^#RUSTFLAGS=' }
     - { regexp: '^MAKEFLAGS=', line: 'MAKEFLAGS="-j$(nproc)"', backrefs: false, insertafter: '^#MAKEFLAGS=' }
 
-- include_tasks: AUR.yml
+#- include_tasks: AUR.yml
 

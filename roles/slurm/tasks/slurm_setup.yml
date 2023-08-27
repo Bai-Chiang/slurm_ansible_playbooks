@@ -21,7 +21,7 @@
 - name: set slurm_conf_dir (Rocky)
   set_fact:
     slurm_conf_dir: /etc/slurm
-  when: ansible_os_family == "RedHat"
+  when: ansible_distribution == "Rocky" or ansible_distribution == "Debian"
 
 - name: copy slurm.conf to all nodes
   ansible.builtin.copy:
@@ -41,19 +41,35 @@
     group: root
     mode: '0644'
   become: true
-  when:
-    - "'slurm_compute_nodes' in group_names"
+  when: "'slurm_compute_nodes' in group_names or 'slurm_login_node' in group_names"
 
 - name: Create user slurm
   ansible.builtin.user:
     name: slurm
     uid: 64030
-    password: '!'
-    password_lock: true
-    shell: "/usr/bin/nologin"
     create_home: false
     state: present
   become: true
+
+- name: Create /var/spool/slurmctld
+  ansible.builtin.file:
+    path: /var/spool/slurmctld
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+  become: true
+  when: "'slurm_control_node' in group_names"
+
+- name: Create /var/spool/slurmd
+  ansible.builtin.file:
+    path: /var/spool/slurmd
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+  become: true
+  when: "'slurm_compute_nodes' in group_names or 'slurm_login_node' in group_names"
 
 - name: Slurm run as user slurm (not root)
   ansible.builtin.shell: |
@@ -62,7 +78,7 @@
     slurm-setuser -u slurm -g slurm -y
   become: true
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_distribution == "Rocky"
     - slurm_conf.changed
 
 - name: start and enable slurmd.service on all compute nodes
@@ -74,23 +90,4 @@
   ansible.builtin.systemd: name=slurmctld.service enabled=true state=started
   become: true
   when: "'slurm_control_node' in group_names"
-
-- name: Create groups if not exists
-  ansible.builtin.group:
-    name: "{{ item.name }}"
-    gid: "{{ item.gid }}"
-    state: present
-  become: true
-  loop: "{{ slurm_groups }}"
-
-- name: Add all cluster nodes to /etc/hosts
-  ansible.builtin.lineinfile:
-    path: /etc/hosts
-    regexp: "^{{ item.ip }}\\s+{{ item.hostname }}"
-    line: "{{ item.ip }}    {{ item.hostname }}"
-    owner: root
-    group: root
-    mode: '0644'
-  become: true
-  loop: "{{ slurm_nodes_hosts }}"
 

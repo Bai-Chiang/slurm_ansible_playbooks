@@ -1,27 +1,26 @@
 ---
-- name: Only admins could ssh into non-login nodes
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^AllowUsers'
-    line: AllowUsers {{ admins }}
-    insertafter: '#\s*AllowUsers'
-    validate: /usr/sbin/sshd -T -f %s
-  become: true
-  when:
-    - "'slurm_login_node' not in group_names"
-    - admins is defined
-
-- import_tasks: install_nfs.yml
-
-- include_tasks: nfs_server.yml
-  when: "'slurm_control_node' in group_names"
-
-- include_tasks: nfs_client.yml
-  when: "'slurm_control_node' not in group_names"
-
 - import_tasks: install_slurm.yml
 
 - include_tasks: slurm_setup.yml
+
+- name: Add all cluster nodes to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ item.ip }}\\s+{{ item.hostname }}"
+    line: "{{ item.ip }}    {{ item.hostname }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  loop: "{{ slurm_nodes_hosts }}"
+
+- name: Create slurm user groups if not exists
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid }}"
+    state: present
+  become: true
+  loop: "{{ slurm_groups }}"
 
 - name: slurm_users.yml
   include_tasks: slurm_users.yml

@@ -14,4 +14,12 @@
       - slurm-slurmd
     state: present
   become: true
-  when: ansible_os_family == "RedHat"
+  when: ansible_distribution == "Rocky"
+
+- name: apt install slurm-wlm
+  ansible.builtin.apt:
+    name: slurm-wlm
+    state: present
+  become: true
+  when: ansible_distribution == "Debian"
+

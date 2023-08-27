@@ -1,21 +1,24 @@
 ---
+nfs_share_list: 
+  - { name: home, server_ip: 192.168.122.10, server_dir: /home, client_mount_point: /home }
+  - { name: opt, server_ip: 192.168.122.10, server_dir: /opt, client_mount_point: /opt }
+
 munge_key_file: files/slurm/munge.key.example
-slurm_config_file: files/slurm/slurm.conf.Rocky
-slurm_cgroup_config_file: files/slurm/cgroup.conf.Rocky
-slurm_gres_config_file: files/slurm/gres.conf.Rocky
+slurm_config_file: files/slurm/slurm.conf.Archlinux
+slurm_cgroup_config_file: files/slurm/cgroup.conf.Archlinux
+slurm_gres_config_file: files/slurm/gres.conf.Archlinux
 
 # The ip/mask of the cluster
-slurm_cluster_ip: 192.168.124.0/24
+slurm_cluster_ip: 192.168.122.0/24
 
 # The control node ip
-slurm_control_node_ip: 192.168.124.10
+slurm_control_node_ip: 192.168.122.10
 
 # all nodes and its ip address, appended to /etc/hosts file
 slurm_nodes_hosts:
-  - { hostname: rocky0, ip: 192.168.124.1 }
-  - { hostname: rocky10, ip: 192.168.124.10 }
-  - { hostname: rocky11, ip: 192.168.124.11 }
-  - { hostname: rocky12, ip: 192.168.124.12 }
+  - { hostname: arch0, ip: 192.168.122.10 }
+  - { hostname: arch1, ip: 192.168.122.11 }
+  - { hostname: arch2, ip: 192.168.122.12 }
 
 # Encrypt this file using for example ansible vault to prevent leak user info.
 slurm_users:

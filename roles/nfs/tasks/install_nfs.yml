@@ -1,0 +1,34 @@
+---
+- name: pacman -S nfs-utils
+  community.general.pacman:
+    name: nfs-utils
+    state: present
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: dnf install nfs-utils
+  ansible.builtin.dnf:
+    name: nfs-utils
+    state: present
+  become: true
+  when: ansible_distribution == "Rocky"
+
+- name: apt install nfs-common
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+  become: true
+  when: ansible_distribution == "Debian"
+
+- name: apt install nfs-kernel-server
+  ansible.builtin.apt:
+    name: nfs-kernel-server
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Debian"
+    - nfs_share.server_ip in ansible_all_ipv4_addresses
+  loop: "{{ nfs_share_list }}"
+  loop_control:
+    loop_var: nfs_share
+

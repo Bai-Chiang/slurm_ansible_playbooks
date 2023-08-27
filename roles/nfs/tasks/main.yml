@@ -1,0 +1,21 @@
+---
+- import_tasks: install_nfs.yml
+
+- include_tasks: nfs_server.yml
+  when: nfs_share.server_ip in ansible_all_ipv4_addresses
+  loop: "{{ nfs_share_list }}"
+  loop_control:
+    loop_var: nfs_share
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- include_tasks: nfs_client.yml
+  when:
+    - nfs_share.server_ip not in ansible_all_ipv4_addresses
+  loop: "{{ nfs_share_list }}"
+  loop_control:
+    loop_var: nfs_share
+
+- name: Flush handlers
+  meta: flush_handlers

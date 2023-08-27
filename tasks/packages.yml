@@ -1,4 +1,5 @@
 ---
+# Basic software
 - name: pacman -S vim nano htop neofetch
   community.general.pacman:
     name:
@@ -22,28 +23,55 @@
     state: present
   become: true
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_distribution == "Rocky"
+    - "'slurm_login_node' in group_names"
+
+- name: apt install vim nano htop neofetch
+  ansible.builtin.apt:
+    name:
+      - vim
+      - nano
+      - htop
+      - neofetch
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Debian"
     - "'slurm_login_node' in group_names"
 
 
-#- name: pacman -S podman fuse-overlayfs toolbox
-#  community.general.pacman:
-#    name:
-#      - podman
-#      - fuse-overlayfs
-#    state: present
-#  become: true
-#  when:
-#    - ansible_distribution == "Archlinux"
-#    - "'slurm_login_node' in group_names"
-#
-#- name: dnf install podman toolbox
-#  ansible.builtin.dnf:
-#    name:
-#      - podman
-#      - toolbox
-#    state: present
-#  become: true
-#  when:
-#    - ansible_os_family == "RedHat"
-#    - "'slurm_login_node' in group_names"
+# Container
+- name: pacman -S podman aardvark-dns toolbox
+  community.general.pacman:
+    name:
+      - podman
+      - aardvark-dns
+      - toolbox
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - "'slurm_login_node' in group_names"
+
+- name: dnf install podman toolbox
+  ansible.builtin.dnf:
+    name:
+      - podman
+      - toolbox
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Rocky"
+    - "'slurm_login_node' in group_names"
+
+- name: apt install podman podman-toolbox
+  ansible.builtin.apt:
+    name:
+      - podman
+      - podman-toolbox
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Debian"
+    - "'slurm_login_node' in group_names"
+

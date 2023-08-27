@@ -1,0 +1,8 @@
+- name: remount
+  ansible.builtin.command: mount --all
+  become: true
+
+- name: nfs reexport
+  ansible.builtin.command: exportfs -arv
+  become: true
+

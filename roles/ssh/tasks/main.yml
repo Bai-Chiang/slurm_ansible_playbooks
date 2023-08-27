@@ -11,3 +11,18 @@
     - { regexp: '^PasswordAuthentication', line: PasswordAuthentication no, insertafter: '#\s*PasswordAuthentication' }
     - { regexp: '^KbdInteractiveAuthentication', line: KbdInteractiveAuthentication no, insertafter: '^KbdInteractiveAuthentication' }
     - { regexp: '^AuthenticationMethods', line: AuthenticationMethods publickey, insertafter: '^PasswordAuthentication' }
+  notify: restart sshd
+
+- name: Only admins could ssh into non-login nodes
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^AllowUsers'
+    line: AllowUsers {{ admins }}
+    insertafter: '#\s*AllowUsers'
+    validate: /usr/sbin/sshd -T -f %s
+  become: true
+  when:
+    - "'slurm_login_node' not in group_names"
+    - admins is defined
+  notify: restart sshd
+

@@ -1,13 +1,12 @@
 ---
-- name: pacman -S nvidia cuda
+- name: pacman -S nvidia
   community.general.pacman:
     name:
       - nvidia
-      - cuda
+      #- cuda
     state: present
   become: true
-  when:
-    - ansible_distribution == "Archlinux"
+  when: ansible_distribution == "Archlinux"
 
 - name: Enable rpmfusion-nonfree (for nvidia driver and cuda)
   ansible.builtin.dnf:
@@ -15,18 +14,36 @@
     disable_gpg_check: true
     state: present
   become: true
-  when:
-    - ansible_os_family == "RedHat"
+  when: ansible_distribution == "Rocky"
 
 - name: dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
   ansible.builtin.dnf:
     name:
       - akmod-nvidia
-      - xorg-x11-drv-nvidia-cuda
+      #- xorg-x11-drv-nvidia-cuda
     state: present
   become: true
-  when:
-    - ansible_os_family == "RedHat"
+  when: ansible_distribution == "Rocky"
+
+- name: Add contrib non-free to apt source
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    state: present
+  loop:
+    - deb http://deb.debian.org/debian/ {{ ansible_distribution_release }} contrib non-free
+    - deb http://security.debian.org/debian-security {{ ansible_distribution_release }}-security contrib non-free
+    - deb http://deb.debian.org/debian/ {{ ansible_distribution_release }}-updates contrib non-free
+  when: ansible_distribution == "Debian"
+
+- name: apt install nvidia-driver nvidia-smi
+  ansible.builtin.apt:
+    name:
+      - nvidia-driver
+      - nvidia-smi
+    state: present
+  become: true
+  when: ansible_distribution == "Debian"
+
 
 - name: copy gres.conf
   ansible.builtin.copy:

@@ -1,0 +1,19 @@
+---
+- name: setsebool -P use_nfs_home_dirs=true
+  ansible.posix.seboolean:
+    name: use_nfs_home_dirs
+    state: true
+    persistent: true
+  when: ansible_selinux.status == "enabled"
+  become: true
+
+- name: Add nfs mount pointss to /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: "\\s+{{ nfs_share.client_mount_point }}\\s+"
+    line: "{{ nfs_share.server_ip }}:/{{ nfs_share.name }}    {{ nfs_share.client_mount_point }}    nfs    defaults,_netdev    0 0"
+    state: present
+  become: true
+  notify:
+    - remount
+

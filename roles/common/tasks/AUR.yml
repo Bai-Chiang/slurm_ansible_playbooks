@@ -10,6 +10,11 @@
   loop:
     - "/paru"
     - "/paru/clone"
+
+- name: Check paru config file
+  ansible.builtin.stat:
+    path: /etc/paru.conf
+  register: paru_conf
   
 - name: Set paru clone directory
   ansible.builtin.lineinfile:
@@ -18,3 +23,4 @@
     line: CloneDir = /paru/clone
     insertafter: '^\[options\]'
   become: true
+  when: paru_conf.stat.exists

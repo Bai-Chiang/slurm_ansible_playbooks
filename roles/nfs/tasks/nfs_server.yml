@@ -1,0 +1,78 @@
+---
+- name: Create NFS bind mount points
+  ansible.builtin.file:
+    path: /srv/nfs/{{ nfs_share.name }}
+    state: directory
+  become: true
+
+- name: Add bind mount points to /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: "^{{ nfs_share.server_dir }}\\s+/srv/nfs/{{ nfs_share.name }}"
+    line: "{{ nfs_share.server_dir }}  /srv/nfs/{{ nfs_share.name }} none  bind  0 0"
+    state: present
+  become: true
+  notify:
+    - remount
+
+- name: add root mount to /etc/exports
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    regexp: "^/srv/nfs\\s+"
+    line: "/srv/nfs  {{ slurm_cluster_ip }}(rw,sync,nocrossmnt,fsid=0)"
+    state: present
+  become: true
+  notify:
+    - nfs reexport
+
+- name: add mount points to /etc/exports
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    regexp: "^/srv/nfs/{{ nfs_share.name }}\\s+"
+    line: "/srv/nfs/{{ nfs_share.name }}  {{ slurm_cluster_ip }}(rw,sync)"
+    state: present
+  become: true
+  notify:
+    - nfs reexport
+
+- name: systemctl enable --now nfsv4-server.service
+  ansible.builtin.systemd: name=nfsv4-server.service enabled=true state=started
+  become: true
+  when: ansible_distribution == "Archlinux"
+
+- name: systemctl mask rpcbind.service rpcbind.socket nfs-server.service
+  ansible.builtin.systemd: name={{ item }} enabled=false masked=true state=stopped
+  become: true
+  loop:
+    - rpcbind.service
+    - rpcbind.socket
+    - nfs-server.service
+  when: ansible_distribution == "Archlinux"
+
+#- name: Config NFSv4 only for Debian and Rocky
+#  ansible.builtin.lineinfile:
+#    path: "{{ item.path }}"
+#    regexp: "{{ item.regexp }}"
+#    line: "{{ item.line }}"
+#    state: present
+#  become: true
+#  when: ansible_distribution == "Debian"
+#  loop:
+#    - { path: /etc/default/nfs-common, regexp: '^NEED_STATD=', line: NEED_STATD="no" }
+#    - { path: /etc/default/nfs-common, regexp: '^NEED_IDMAPD=', line: NEED_IDMAPD="yes" }
+#    - { path: /etc/default/nfs-kernel-server, regexp: '^RPCNFSDOPTS=', line: RPCNFSDOPTS="-N 2 -N 3" }
+#    - { path: /etc/default/nfs-kernel-server, regexp: '^RPCMOUNTDOPTS=', line: RPCMOUNTDOPTS="--manage-gids -N 2 -N 3" }
+#
+#- name: systemctl mask rpcbind.service rpcbind.socket
+#  ansible.builtin.systemd: name={{ item }} enabled=false masked=true state=stopped
+#  become: true
+#  loop:
+#    - rpcbind.service
+#    - rpcbind.socket
+#  when: ansible_distribution == "Debian"
+
+- name: systemctl enable nfs-server.service
+  ansible.builtin.systemd: name=nfs-server.service enabled=true state=started
+  become: true
+  when: ansible_distribution == "Rocky" or ansible_distribution == "Debian"
+
