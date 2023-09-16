@@ -8,23 +8,6 @@
   become: true
   when: ansible_distribution == "Archlinux"
 
-- name: Enable rpmfusion-nonfree (for nvidia driver and cuda)
-  ansible.builtin.dnf:
-    name: https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
-    disable_gpg_check: true
-    state: present
-  become: true
-  when: ansible_distribution == "Rocky"
-
-- name: dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
-  ansible.builtin.dnf:
-    name:
-      - akmod-nvidia
-      #- xorg-x11-drv-nvidia-cuda
-    state: present
-  become: true
-  when: ansible_distribution == "Rocky"
-
 - name: Add contrib non-free to apt source
   ansible.builtin.apt_repository:
     repo: "{{ item }}"
@@ -43,6 +26,23 @@
     state: present
   become: true
   when: ansible_distribution == "Debian"
+
+- name: Enable rpmfusion-nonfree (for nvidia driver and cuda)
+  ansible.builtin.dnf:
+    name: https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+    disable_gpg_check: true
+    state: present
+  become: true
+  when: ansible_distribution == "Rocky"
+
+- name: dnf install akmod-nvidia xorg-x11-drv-nvidia-cuda
+  ansible.builtin.dnf:
+    name:
+      - akmod-nvidia
+      #- xorg-x11-drv-nvidia-cuda
+    state: present
+  become: true
+  when: ansible_distribution == "Rocky"
 
 
 - name: copy gres.conf

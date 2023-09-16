@@ -9,17 +9,17 @@
       become: true
       when: ansible_distribution == "Archlinux"
 
-    - name: dnf update
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-      become: true
-      when: ansible_distribution == "Rocky"
-
     - name: apt update && apt dist-upgrade
       ansible.builtin.apt:
         update_cache: true
         upgrade: dist
       become: true
       when: ansible_distribution == "Debian"
+
+    - name: dnf update
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+      become: true
+      when: ansible_distribution == "Rocky"
 

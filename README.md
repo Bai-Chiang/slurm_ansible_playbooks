@@ -4,8 +4,8 @@
 The playbooks are tested with following distributions:
 
 - Arch Linux
-- Rocky Linux 9
 - Debian 12
+- Rocky Linux 9
 
 
 These playbooks does not handle networking and firewall.

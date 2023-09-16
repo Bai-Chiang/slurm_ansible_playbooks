@@ -6,13 +6,6 @@
   become: true
   when: ansible_distribution == "Archlinux"
 
-- name: dnf install nfs-utils
-  ansible.builtin.dnf:
-    name: nfs-utils
-    state: present
-  become: true
-  when: ansible_distribution == "Rocky"
-
 - name: apt install nfs-common
   ansible.builtin.apt:
     name: nfs-common
@@ -31,4 +24,11 @@
   loop: "{{ nfs_share_list }}"
   loop_control:
     loop_var: nfs_share
+
+- name: dnf install nfs-utils
+  ansible.builtin.dnf:
+    name: nfs-utils
+    state: present
+  become: true
+  when: ansible_distribution == "Rocky"
 

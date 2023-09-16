@@ -13,19 +13,6 @@
     - ansible_distribution == "Archlinux"
     - "'slurm_login_node' in group_names"
 
-- name: dnf install vim nano htop neofetch
-  ansible.builtin.dnf:
-    name:
-      - vim
-      - nano
-      - htop
-      - neofetch
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Rocky"
-    - "'slurm_login_node' in group_names"
-
 - name: apt install vim nano htop neofetch
   ansible.builtin.apt:
     name:
@@ -37,6 +24,19 @@
   become: true
   when:
     - ansible_distribution == "Debian"
+    - "'slurm_login_node' in group_names"
+
+- name: dnf install vim nano htop neofetch
+  ansible.builtin.dnf:
+    name:
+      - vim
+      - nano
+      - htop
+      - neofetch
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Rocky"
     - "'slurm_login_node' in group_names"
 
 
@@ -53,17 +53,6 @@
     - ansible_distribution == "Archlinux"
     - "'slurm_login_node' in group_names"
 
-- name: dnf install podman toolbox
-  ansible.builtin.dnf:
-    name:
-      - podman
-      - toolbox
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Rocky"
-    - "'slurm_login_node' in group_names"
-
 - name: apt install podman podman-toolbox
   ansible.builtin.apt:
     name:
@@ -73,5 +62,16 @@
   become: true
   when:
     - ansible_distribution == "Debian"
+    - "'slurm_login_node' in group_names"
+
+- name: dnf install podman toolbox
+  ansible.builtin.dnf:
+    name:
+      - podman
+      - toolbox
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Rocky"
     - "'slurm_login_node' in group_names"
 

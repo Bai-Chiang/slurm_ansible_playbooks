@@ -18,10 +18,10 @@
     slurm_conf_dir: /etc/slurm-llnl
   when: ansible_distribution == "Archlinux"
 
-- name: set slurm_conf_dir (Rocky)
+- name: set slurm_conf_dir (Debian and Rocky)
   set_fact:
     slurm_conf_dir: /etc/slurm
-  when: ansible_distribution == "Rocky" or ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" or ansible_distribution == "Rocky"
 
 - name: copy slurm.conf to all nodes
   ansible.builtin.copy:

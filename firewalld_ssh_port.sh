@@ -4,13 +4,13 @@
 if [[ -e /usr/bin/pacman ]] ; then
     pacman -Syu
     pacman -S --needed firewalld
-elif [[ -e /usr/bin/dnf ]] ; then
-    dnf update
-    dnf install firewalld
 elif [[ -e /usr/bin/apt ]] ; then
     apt update
     apt dist-upgrade
     apt install firewalld
+elif [[ -e /usr/bin/dnf ]] ; then
+    dnf update
+    dnf install firewalld
 fi
 
 read -p "Is this login node? [y/n] " login_node
