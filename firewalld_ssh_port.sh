@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Install firewalld
+echo "Install firewalld ..."
 if [[ -e /usr/bin/pacman ]] ; then
     pacman -Syu
     pacman -S --needed firewalld
@@ -13,10 +13,12 @@ elif [[ -e /usr/bin/dnf ]] ; then
     dnf install firewalld
 fi
 
+echo -e "\n"
 read -p "Is this login node? [y/n] " login_node
 login_node="${login_node,,}"
 
 if [[ $login_node == y ]] ; then
+    echo -e "\nInterfaces:"
     ip address show scope global
     echo -e "\nSet any interface to External firewall zone that only allow ssh connection?\nType interface name:"
     read ext_interface
@@ -27,6 +29,7 @@ if [[ $login_node == y ]] ; then
     firewall-cmd --permanent --policy trust_to_external --set-target ACCEPT
 fi
 
+echo -e "\nInterfaces:"
 ip address show scope global
 echo -e "\nSet any interface to Trusted firewall zone for internal connection? Type interface name:"
 read trust_interface
