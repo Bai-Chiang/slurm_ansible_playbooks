@@ -1,7 +1,7 @@
 ---
 nfs_share_list: 
-  - { name: home, server_ip: 192.168.122.40, server_dir: /home, client_mount_point: /home }
-  - { name: opt, server_ip: 192.168.122.40, server_dir: /opt, client_mount_point: /opt }
+  - { name: home, server_ip: 192.168.122.40, server_dir: /home, client_mount_point: /home, mount_opts: 'defaults,_netdev' }
+  - { name: opt, server_ip: 192.168.122.40, server_dir: /opt, client_mount_point: /opt, mount_opts: 'defaults,_netdev' }
 
 munge_key_file: files/slurm/munge.key.example
 slurm_config_file: files/slurm/slurm.conf.Rocky

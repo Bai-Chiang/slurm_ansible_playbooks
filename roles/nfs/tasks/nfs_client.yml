@@ -11,7 +11,7 @@
   ansible.builtin.lineinfile:
     path: /etc/fstab
     regexp: "\\s+{{ nfs_share.client_mount_point }}\\s+"
-    line: "{{ nfs_share.server_ip }}:/{{ nfs_share.name }}    {{ nfs_share.client_mount_point }}    nfs    defaults,_netdev    0 0"
+    line: "{{ nfs_share.server_ip }}:/{{ nfs_share.name }}    {{ nfs_share.client_mount_point }}    nfs    {{ nfs_share.mount_opts }}    0 0"
     state: present
   become: true
   notify:
