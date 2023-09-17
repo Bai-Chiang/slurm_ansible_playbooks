@@ -8,6 +8,22 @@
   become: true
   when: ansible_distribution == "Archlinux"
 
+- name: Remove kms from the HOOKS array in /etc/mkinitcpio.conf
+  ansible.builtin.replace:
+    path: /etc/mkinitcpio.conf
+    regexp: '^(HOOKS=.+)\s+kms'
+    replace: '\1 '
+  become: true
+  when: ansible_distribution == "Archlinux"
+  register: kms_remove
+
+- name: Regenerate the initramfs
+  ansible.builtin.command: mkinitcpio -P
+  become: true
+  when:
+    - ansible_distribution == "Archlinux"
+    - kms_remove.changed
+
 - name: Add contrib non-free to apt source
   ansible.builtin.apt_repository:
     repo: "{{ item }}"
