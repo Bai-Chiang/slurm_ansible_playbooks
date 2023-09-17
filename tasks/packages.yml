@@ -13,11 +13,12 @@
     - ansible_distribution == "Archlinux"
     - "'slurm_login_node' in group_names"
 
-- name: apt install vim nano htop neofetch
+- name: apt install vim nano curl htop neofetch
   ansible.builtin.apt:
     name:
       - vim
       - nano
+      - curl
       - htop
       - neofetch
     state: present

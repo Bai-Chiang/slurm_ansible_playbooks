@@ -10,4 +10,4 @@ srun -l cat /etc/hostname
 
 sleep 1
 
-$HOME/miniforge3/bin/mpiexec -n 4 $HOME/miniforge3/bin/python test.py 
+$CONDA_PREFIX/bin/mpiexec -n 4 $CONDA_PREFIX/bin/python test.py 

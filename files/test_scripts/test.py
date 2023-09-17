@@ -17,4 +17,4 @@ if rank == 0:
 
 HOSTNAME = subprocess.check_output("echo $HOSTNAME", shell=True, text=True)
 hostname = subprocess.check_output("cat /etc/hostname", shell=True, text=True)
-print('rank={:d} $HOSTNAME={} /etc/hostname {}'.format(rank, HOSTNAME, hostname))
+print('rank={:d}\n\t$HOSTNAME={}\t/etc/hostname {}'.format(rank, HOSTNAME, hostname))
