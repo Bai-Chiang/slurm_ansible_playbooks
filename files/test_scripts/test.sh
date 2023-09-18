@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 #SBATCH --ntasks=4
+#SBATCH --hint=nomultithread
 #SBATCH --output=stdout
 
 #srun -n1 -l bash -c "cat /etc/hostname"
