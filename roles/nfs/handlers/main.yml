@@ -1,5 +1,7 @@
 - name: remount
-  ansible.builtin.command: mount --all
+  ansible.builtin.shell: |
+    systemctl daemon-reload
+    mount --all
   become: true
 
 - name: nfs reexport
