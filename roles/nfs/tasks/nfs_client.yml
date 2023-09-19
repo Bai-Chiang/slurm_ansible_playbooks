@@ -7,7 +7,16 @@
   when: ansible_selinux.status == "enabled"
   become: true
 
-- name: Add nfs mount pointss to /etc/fstab
+- name: Create mount point
+  ansible.builtin.file:
+    path: "{{ nfs_share.client_mount_point }}"
+    state: directory
+    owner: "{{ nfs_share.owner }}"
+    group: "{{ nfs_share.group }}"
+    mode: "{{ nfs_share.mode }}"
+  become: true
+
+- name: Add nfs mount point to /etc/fstab
   ansible.builtin.lineinfile:
     path: /etc/fstab
     regexp: "\\s+{{ nfs_share.client_mount_point }}\\s+"

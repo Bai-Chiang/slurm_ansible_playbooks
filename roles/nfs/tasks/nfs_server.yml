@@ -1,4 +1,13 @@
 ---
+- name: mount point permission
+  ansible.builtin.file:
+    path: "{{ nfs_share.sever_dir }}"
+    state: directory
+    owner: "{{ nfs_share.owner }}"
+    group: "{{ nfs_share.group }}"
+    mode: "{{ nfs_share.mode }}"
+  become: true
+
 - name: Create NFS bind mount points
   ansible.builtin.file:
     path: /srv/nfs/{{ nfs_share.name }}
