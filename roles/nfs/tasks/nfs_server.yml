@@ -1,7 +1,7 @@
 ---
 - name: mount point permission
   ansible.builtin.file:
-    path: "{{ nfs_share.sever_dir }}"
+    path: "{{ nfs_share.server_dir }}"
     state: directory
     owner: "{{ nfs_share.owner }}"
     group: "{{ nfs_share.group }}"
