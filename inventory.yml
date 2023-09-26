@@ -4,38 +4,24 @@ all:
 
     slurm_login_node:
       hosts:
-        192.168.122.10:
-        192.168.122.20:
+        192.168.122.1:
 
     slurm_control_node:
       hosts:
-        192.168.122.10:
-        192.168.122.21:
+        192.168.122.1:
+          ansible_connection: local
 
     slurm_compute_nodes:
       hosts:
-        192.168.122.11:
-        192.168.122.22:
+        192.168.122.[10:11]:
 
     nvidia_gpu_nodes:
       hosts:
-
-    debian_nodes:
-      hosts:
-        192.168.122.20:
-        192.168.122.21:
-        192.168.122.22:
-
-    archlinux_nodes:
-      hosts:
-        192.168.122.10:
-        192.168.122.11:
-
-    #rockylinux_nodes:
-    #  hosts:
+        192.168.122.1:
+        192.168.122.[10:11]:
 
   vars:
     ansible_user: tux
     ansible_port: 22
-    ansible_ssh_private_key_file: ~/.ssh/testing
-    
+    ansible_ssh_private_key_file: ~/.ssh/example
+ 
