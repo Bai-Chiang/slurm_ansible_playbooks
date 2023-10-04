@@ -5,6 +5,7 @@
     name:
       - vim
       - nano
+      - rsync
       - htop
       - neofetch
     state: present
@@ -18,6 +19,7 @@
     name:
       - vim
       - nano
+      - rsync
       - curl
       - htop
       - neofetch
@@ -33,6 +35,7 @@
       - vim
       - nano
       - htop
+      - rsync
       - neofetch
     state: present
   become: true
