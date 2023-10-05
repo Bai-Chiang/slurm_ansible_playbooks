@@ -1,11 +1,19 @@
 ---
 # Basic software
+- name: Install rsync curl wget on all nodes
+  ansible.builtin.package:
+    name:
+      - rsync
+      - curl
+      - wget
+    state: present
+  become: true
+
 - name: pacman -S vim nano htop neofetch
   community.general.pacman:
     name:
       - vim
       - nano
-      - rsync
       - htop
       - neofetch
     state: present
@@ -19,7 +27,6 @@
     name:
       - vim
       - nano
-      - rsync
       - curl
       - htop
       - neofetch
@@ -35,7 +42,6 @@
       - vim
       - nano
       - htop
-      - rsync
       - neofetch
     state: present
   become: true
