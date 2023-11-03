@@ -51,34 +51,31 @@
 
 
 # Container
-- name: pacman -S podman aardvark-dns toolbox
+- name: pacman -S podman aardvark-dns
   community.general.pacman:
     name:
       - podman
       - aardvark-dns
-      - toolbox
     state: present
   become: true
   when:
     - ansible_distribution == "Archlinux"
     - "'slurm_login_node' in group_names"
 
-- name: apt install podman podman-toolbox
+- name: apt install podman
   ansible.builtin.apt:
     name:
       - podman
-      - podman-toolbox
     state: present
   become: true
   when:
     - ansible_distribution == "Debian"
     - "'slurm_login_node' in group_names"
 
-- name: dnf install podman toolbox
+- name: dnf install podman
   ansible.builtin.dnf:
     name:
       - podman
-      - toolbox
     state: present
   become: true
   when:
