@@ -24,6 +24,7 @@ slurm_nodes_hosts:
   - { hostname: node1,  ip: 192.168.122.1 }
   - { hostname: node10, ip: 192.168.122.10 }
   - { hostname: node11, ip: 192.168.122.11 }
+  - { hostname: node20, ip: 192.168.122.20 }
 
 # Encrypt this file using for example ansible vault to prevent leak user info.
 slurm_users:

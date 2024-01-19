@@ -14,11 +14,13 @@ all:
     slurm_compute_nodes:
       hosts:
         192.168.122.[10:11]:
+        192.168.122.20:
 
     nvidia_gpu_nodes:
       hosts:
         192.168.122.1:
         192.168.122.[10:11]:
+        192.168.122.20:
 
   vars:
     ansible_user: tux
