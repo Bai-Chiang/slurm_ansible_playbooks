@@ -81,6 +81,26 @@
     - ansible_distribution == "Rocky"
     - slurm_conf.changed
 
+- name: Create slurmd.service.d directory to modify nice value
+  ansible.builtin.file:
+    path: /etc/systemd/system/slurmd.service.d
+    state: directory
+  become: true
+  when:
+    - "'slurm_compute_nodes' in group_names"
+    - slurmd_nice is defined
+
+- name: Create drop in file to modify nice value
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/slurmd.service.d/nice.conf
+    content: |
+      [Service]
+      Nice={{ slurmd_nice }}
+  become: true
+  when:
+    - "'slurm_compute_nodes' in group_names"
+    - slurmd_nice is defined
+
 - name: start and enable slurmd.service on all compute nodes
   ansible.builtin.systemd: name=slurmd.service enabled=true state=started
   become: true

@@ -13,6 +13,9 @@ slurm_config_file: files/slurm/slurm.conf
 slurm_cgroup_config_file: files/slurm/cgroup.conf
 slurm_gres_config_file: files/slurm/gres.conf
 
+# slurm daemon's nice value (nice value on compute nodes)
+slurmd_nice: 10
+
 # The ip/mask of the cluster
 slurm_cluster_ip: 192.168.122.0/24
 
