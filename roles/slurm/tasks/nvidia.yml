@@ -38,13 +38,33 @@
     - kms_remove.changed
     - sbctl_cmd.stat.exists
 
-- name: Enable rpmfusion-nonfree (for nvidia driver and cuda)
+
+- name: dnf install distribution-gpg-keys
+  ansible.builtin.dnf: name=distribution-gpg-keys state=present
+  become: true
+  when: ansible_distribution == "Fedora" or ansible_distribution == "Rocky"
+
+- name: import rpmfusion key (Fedora)
+  ansible.builtin.rpm_key:
+    key: /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-nonfree-fedora-{{ ansible_distribution_major_version }}
+    state: present
+  become: true
+  when: ansible_distribution == "Fedora"
+
+- name: Enable rpmfusion-nonfree (for nvidia driver)
+  ansible.builtin.dnf:
+    name: https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
+    state: present
+  become: true
+  when: ansible_distribution == "Fedora"
+
+- name: Enable rpmfusion-nonfree (for nvidia driver)
   ansible.builtin.dnf:
     name: https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm
     disable_gpg_check: true
     state: present
   become: true
-  when: ansible_distribution == "Fedora" or ansible_distribution == "Rocky"
+  when: ansible_distribution == "Rocky"
 
 - name: dnf install akmod-nvidia
   ansible.builtin.dnf:
@@ -54,6 +74,7 @@
     state: present
   become: true
   when: ansible_distribution == "Fedora" or ansible_distribution == "Rocky"
+
 
 - name: Add contrib non-free to apt source
   ansible.builtin.apt_repository:
