@@ -6,8 +6,8 @@
     path: /etc/security/limits.conf
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
-    become: true
+  become: true
   loop:
-    - { regexp: "^\*\s+soft\s+nproc", line: "* soft nproc 1000" }
-    - { regexp: "^\*\s+hard\s+nproc", line: "* hard nproc 1000" }
+    - { regexp: '^\*\s+soft\s+nproc', line: '* soft nproc 1000' }
+    - { regexp: '^\*\s+hard\s+nproc', line: '* hard nproc 1000' }
 

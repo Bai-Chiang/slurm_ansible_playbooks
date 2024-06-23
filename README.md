@@ -1,9 +1,10 @@
 
-# Deploying [slurm](https://slurm.schedmd.com/documentation.html)  on high performance computing (HPC) cluster with [ansible](https://www.ansible.com/) playbooks.
+# Deploying [SLURM](https://slurm.schedmd.com/documentation.html)  on high performance computing (HPC) cluster with [Ansible](https://www.ansible.com/) playbooks.
 
 The playbooks are tested with following distributions:
 
 - Arch Linux
+- Fedora
 - Debian 12
 - Rocky Linux 9
 

@@ -9,76 +9,48 @@
     state: present
   become: true
 
-- name: pacman -S vim nano htop neofetch
-  community.general.pacman:
+- name: Install git vim nano htop on login node
+  ansible.builtin.package:
     name:
+      - git
       - vim
       - nano
       - htop
-      - neofetch
     state: present
   become: true
   when:
-    - ansible_distribution == "Archlinux"
-    - "'slurm_login_node' in group_names"
-
-- name: apt install vim nano curl htop neofetch
-  ansible.builtin.apt:
-    name:
-      - vim
-      - nano
-      - curl
-      - htop
-      - neofetch
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Debian"
-    - "'slurm_login_node' in group_names"
-
-- name: dnf install vim nano htop neofetch
-  ansible.builtin.dnf:
-    name:
-      - vim
-      - nano
-      - htop
-      - neofetch
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Rocky"
     - "'slurm_login_node' in group_names"
 
 
-# Container
-- name: pacman -S podman aardvark-dns
-  community.general.pacman:
-    name:
-      - podman
-      - aardvark-dns
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Archlinux"
-    - "'slurm_login_node' in group_names"
-
-- name: apt install podman
-  ansible.builtin.apt:
-    name:
-      - podman
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Debian"
-    - "'slurm_login_node' in group_names"
-
-- name: dnf install podman
-  ansible.builtin.dnf:
-    name:
-      - podman
-    state: present
-  become: true
-  when:
-    - ansible_distribution == "Rocky"
-    - "'slurm_login_node' in group_names"
+## Container
+#- name: pacman -S podman aardvark-dns
+#  community.general.pacman:
+#    name:
+#      - podman
+#      - aardvark-dns
+#    state: present
+#  become: true
+#  when:
+#    - ansible_distribution == "Archlinux"
+#    - "'slurm_login_node' in group_names"
+#
+#- name: apt install podman
+#  ansible.builtin.apt:
+#    name:
+#      - podman
+#    state: present
+#  become: true
+#  when:
+#    - ansible_distribution == "Debian"
+#    - "'slurm_login_node' in group_names"
+#
+#- name: dnf install podman
+#  ansible.builtin.dnf:
+#    name:
+#      - podman
+#    state: present
+#  become: true
+#  when:
+#    - ansible_distribution == "Fedora" or ansible_distribution == "Rocky"
+#    - "'slurm_login_node' in group_names"
 

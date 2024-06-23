@@ -83,5 +83,5 @@
 - name: systemctl enable nfs-server.service
   ansible.builtin.systemd: name=nfs-server.service enabled=true state=started
   become: true
-  when: ansible_distribution == "Debian" or ansible_distribution == "Rocky"
+  when: ansible_distribution == "Fedora" or ansible_distribution == "Debian" or ansible_distribution == "Rocky"
 

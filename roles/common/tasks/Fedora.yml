@@ -1,0 +1,10 @@
+---
+- name: dnf install python3-libsemanage
+  ansible.builtin.dnf:
+    name: python3-libsemanage
+    state: present
+  become: true
+  when:
+    - ansible_distribution == "Fedora"
+    - ansible_selinux.status == "enabled"
+

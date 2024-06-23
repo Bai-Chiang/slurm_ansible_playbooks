@@ -6,13 +6,6 @@
   become: true
   when: ansible_distribution == "Archlinux"
 
-- name: apt install slurm-wlm
-  ansible.builtin.apt:
-    name: slurm-wlm
-    state: present
-  become: true
-  when: ansible_distribution == "Debian"
-
 - name: dnf install slurm
   ansible.builtin.dnf:
     name:
@@ -21,5 +14,12 @@
       - slurm-slurmd
     state: present
   become: true
-  when: ansible_distribution == "Rocky"
+  when: ansible_distribution == "Fedora" or ansible_distribution == "Rocky"
+
+- name: apt install slurm-wlm
+  ansible.builtin.apt:
+    name: slurm-wlm
+    state: present
+  become: true
+  when: ansible_distribution == "Debian"
 
