@@ -3,7 +3,7 @@
 admins: 'tux admin1'
 
 # List of NFS mount points
-nfs_share_list: 
+nfs_share_list:
   - { name: home, server_ip: 192.168.122.1, server_dir: /home, client_mount_point: /home, mount_opts: 'defaults,_netdev', owner: root, group: root, mode: '0755' }
   - { name: data, server_ip: 192.168.122.1, server_dir: /data, client_mount_point: /data, mount_opts: 'defaults,_netdev,nofail', owner: root, group: root, mode: '0755' }
 
