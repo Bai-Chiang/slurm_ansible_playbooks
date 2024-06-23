@@ -1,36 +1,36 @@
 ---
 - name: create user without home directory (non-control nodes)
   ansible.builtin.user:
-    name: "{{ slurm_user.name }}"
-    uid: "{{ slurm_user.uid }}"
-    groups: "{{ slurm_user.addition_groups }}"
-    password: "{{ slurm_user.password }}"
+    name: "{{ username.name }}"
+    uid: "{{ username.uid }}"
+    groups: "{{ username.addition_groups }}"
+    password: "{{ username.password }}"
     update_password: on_create
     create_home: false
-    state: "{{ slurm_user.state }}"
+    state: "{{ username.state }}"
     remove: true
   become: true
   when: "'slurm_control_node' not in group_names"
 
 - name: create user with home directory (control node)
   ansible.builtin.user:
-    name: "{{ slurm_user.name }}"
-    uid: "{{ slurm_user.uid }}"
-    groups: "{{ slurm_user.addition_groups }}"
-    password: "{{ slurm_user.password }}"
+    name: "{{ username.name }}"
+    uid: "{{ username.uid }}"
+    groups: "{{ username.addition_groups }}"
+    password: "{{ username.password }}"
     update_password: on_create
     create_home: true
-    state: "{{ slurm_user.state }}"
+    state: "{{ username.state }}"
     remove: true
   become: true
   when: "'slurm_control_node' in group_names"
 
 - name: Create .ssh directory if it does not exist
   ansible.builtin.file:
-    path: "/home/{{ slurm_user.name }}/.ssh"
+    path: "/home/{{ username.name }}/.ssh"
     state: directory
-    owner: "{{ slurm_user.name }}"
-    group: "{{ slurm_user.name }}"
+    owner: "{{ username.name }}"
+    group: "{{ username.name }}"
     mode: '0700'
   become: true
   when: "'slurm_control_node' in group_names"
@@ -38,11 +38,11 @@
 - name: Copy ssk key
   ansible.builtin.copy:
     content: |
-      {{ slurm_user.ssh_public_key }}
-    dest: /home/{{ slurm_user.name }}/.ssh/authorized_keys
+      {{ username.ssh_public_key }}
+    dest: /home/{{ username.name }}/.ssh/authorized_keys
     force: false
-    owner: "{{ slurm_user.name }}"
-    group: "{{ slurm_user.name }}"
+    owner: "{{ username.name }}"
+    group: "{{ username.name }}"
     mode: '0600'
   become: true
   when: "'slurm_control_node' in group_names"

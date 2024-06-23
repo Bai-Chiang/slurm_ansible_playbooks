@@ -29,8 +29,12 @@ slurm_nodes_hosts:
   - { hostname: node11, ip: 192.168.122.11 }
   - { hostname: node20, ip: 192.168.122.20 }
 
-# Encrypt this file using for example ansible vault to prevent leak user info.
-slurm_users:
+user_groups:
+  - { name: secret_group, gid: 12345, state: present }
+  - { name: another_group, gid: 23456, state: present }
+
+# Encrypt this file, using for example ansible vault to prevent leak user info.
+user_accounts:
   - name: johnsmith
     uid: 1234
     state: present
@@ -38,6 +42,3 @@ slurm_users:
     addition_groups: secret_group,another_group
     ssh_public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB3uVHbEg3FnFodk/2fpDD/U1Ousnrqke8i2WP855zVN
 
-slurm_groups:
-  - { name: secret_group, gid: 12345, state: present }
-  - { name: another_group, gid: 23456, state: present }
