@@ -1,7 +1,9 @@
 ---
-- name: pacman -S slurm-llnl
+- name: pacman -S slurm-llnl openpmix
   community.general.pacman:
-    name: slurm-llnl
+    name:
+      - slurm-llnl
+      - openpmix
     state: present
   become: true
   when: ansible_distribution == "Archlinux"

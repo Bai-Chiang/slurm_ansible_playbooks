@@ -101,13 +101,13 @@
     - "'slurm_compute_nodes' in group_names"
     - slurmd_nice is defined
 
-- name: start and enable slurmd.service on all compute nodes
-  ansible.builtin.systemd: name=slurmd.service enabled=true state=started
-  become: true
-  when: "'slurm_compute_nodes' in group_names"
-
 - name: start and enable slurmctld.service on all control nodes
   ansible.builtin.systemd: name=slurmctld.service enabled=true state=started
   become: true
   when: "'slurm_control_node' in group_names"
+
+- name: start and enable slurmd.service on all compute nodes
+  ansible.builtin.systemd: name=slurmd.service enabled=true state=started
+  become: true
+  when: "'slurm_compute_nodes' in group_names"
 
