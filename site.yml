@@ -11,7 +11,7 @@
     - name: copy test scripts
       ansible.builtin.copy:
         src: test_scripts/
-        dest: "{{ ansible_user_dir }}"
+        dest: "{{ ansible_user_dir }}/slurm_test"
         mode: '0644'
       when: "'slurm_control_node' in group_names"
 
